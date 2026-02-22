@@ -312,6 +312,12 @@ wait(void)
   }
 }
 
+static uint rand_state = 1;
+static uint rand(void){
+  rand_state = rand_state * 1664525 + 1013904223;
+  return rand_state;
+}
+
 //PAGEBREAK: 42
 // Per-CPU process scheduler.
 // Each CPU calls scheduler() after setting itself up.
@@ -333,7 +339,7 @@ scheduler(void)
 
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
-    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+    /*for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       if(p->state != RUNNABLE)
         continue;
 
@@ -350,6 +356,36 @@ scheduler(void)
       // Process is done running for now.
       // It should have changed its p->state before coming back.
       c->proc = 0;
+    }*/
+    int total = 0;
+    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+      if(p -> state == RUNNABLE) total += p -> tickets;
+    }
+    if(total == 0){
+      release(&ptable.lock);
+      continue;
+    }
+
+    int winner = (int)(rand() % total);
+
+    int rsum = 0;
+    struct proc *chosen = 0;
+
+    for(p = ptable.proc; p < &ptable.proc[NPROC];p++){
+      if(p -> state != RUNNABLE) continue;
+      rsum += p -> tickets;
+      if(rsum > winner){
+        chosen = p;
+        break;
+      }
+    }
+    if(chosen){
+      c -> proc = chosen;
+      switchuvm(chosen);
+      chosen -> state = RUNNING;
+      swtch(&(c -> scheduler), chosen -> context);
+      switchkvm();
+      c -> proc = 0;
     }
     release(&ptable.lock);
 
