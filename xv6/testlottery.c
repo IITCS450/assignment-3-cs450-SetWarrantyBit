@@ -17,7 +17,7 @@ func(int tickets, int sec)
     cnt++;
     num = cnt;
   }
-
+  sleep(tickets);
   printf(1, "pid %d tickets %d count %d\n", getpid(), tickets, cnt);
   exit();
 }
@@ -28,6 +28,6 @@ int main(void){
   if(fork() == 0) func(10, sec);
   if(fork() == 0) func(20, sec);
   if(fork() == 0) func(30, sec);
-
+  wait(); wait(); wait();
   exit();
 }
