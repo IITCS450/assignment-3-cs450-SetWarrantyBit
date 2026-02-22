@@ -23,7 +23,7 @@ func(int tickets, int sec)
 }
 
 int main(void){
-  int sec = 10;
+  int sec = 60;
 
   if(fork() == 0) func(10, sec);
   if(fork() == 0) func(20, sec);

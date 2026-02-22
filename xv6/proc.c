@@ -366,7 +366,7 @@ scheduler(void)
       continue;
     }
 
-    int winner = (int)(rand() % total);
+    int winner = (int)((rand() >> 16) % total);
 
     int rsum = 0;
     struct proc *chosen = 0;
