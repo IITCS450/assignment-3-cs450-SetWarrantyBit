@@ -2,8 +2,8 @@
 #include "stat.h"
 #include "user.h"
 
-static volatile int sink = 0;
-static void burn(int n){ for(int i=0;i<n;i++) sink += i; }
+static volatile int num = 0;
+static void burn(int n){ for(int i=0;i<n;i++) num += i; }
 
 int main(int argc, char **argv){
   int t = 10;
